@@ -12,7 +12,7 @@ def extract_title(markdown):
     
     return match.group(1)
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(basepath, from_path, template_path, dest_path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     
     with open(from_path, 'r') as markdown_file:
@@ -26,13 +26,15 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(markdown)
     template = template.replace(r"{{ Title }}", title)
     template = template.replace(r"{{ Content }}", markdown_html)
+    template = template.replace("href=\"/", f"href=\"{basepath}")
+    template = template.replace("src=\"/", f"src=\"{basepath}")
 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
 
     with open(dest_path, 'w') as generated_file:
         generated_file.write(template)
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(basepath, dir_path_content, template_path, dest_dir_path):
     print(f"Generating Page Recursive {dir_path_content}, {template_path}, {dest_dir_path}")
     for filename in os.listdir(dir_path_content):
         print(f"Staring {filename}")
@@ -41,10 +43,10 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
         print(f" * {from_path} -> {dest_path}")
         if os.path.isfile(from_path):
             print(f"  * {from_path} is a file create report {dest_path}")
-            generate_page(from_path, template_path, dest_path.replace(".md",".html"))
+            generate_page(basepath, from_path, template_path, dest_path.replace(".md",".html"))
         else:
             print(f"  * {from_path} is a folder keep looking")
-            generate_pages_recursive(from_path, template_path, dest_path)
+            generate_pages_recursive(basepath, from_path, template_path, dest_path)
 
 
 
