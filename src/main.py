@@ -7,9 +7,9 @@ from markdown import generate_pages_recursive
 
 dir_path_static = "./static"
 dir_path_public = "./public"
-basepath = "/"
 
 def main():
+    basepath = "/"
     if len(sys.argv) >= 2:
         basepath = sys.argv[1]
 
